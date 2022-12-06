@@ -43,6 +43,7 @@ public class PostController {
     @ResponseBody
     public Boolean deletePost(@PathVariable Long id,@RequestParam String password){
         return postService.deletePost(id, password);
+
     }
 
 }
