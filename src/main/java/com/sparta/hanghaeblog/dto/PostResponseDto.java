@@ -3,10 +3,12 @@ package com.sparta.hanghaeblog.dto;
 import com.sparta.hanghaeblog.entity.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 public class PostResponseDto {
     private Long id;
