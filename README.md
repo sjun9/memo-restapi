@@ -18,9 +18,9 @@ REST란 URI를 통해 자원을 표시하고 HTTP Method를 이용하여 데이�
 
 
 #### 4. 적절한 관심사 분리를 적용하였나요? (Controller, Repository, Service)
-Controller는 웹에서 요청이 왔을 때 클라이언트에서 받은 데이터를 적절한 Service로 넘겨주고 처리한 후 지정된 뷰에 다시 객체를 넘겨주는 역할
-Service는 알맞는 비즈니스 로직을 수행하고 가공하여 Controller에게 다시 데이터를 넘긴다. DB정보가 필요할 때 Repository에 요청
-Repository는 Entity객체에 의해 DB에 직접 접근, 관리, CRUD를 수행한다
+- Controller는 웹에서 요청이 왔을 때 클라이언트에서 받은 데이터를 적절한 Service로 넘겨주고 처리한 후 지정된 뷰에 다시 객체를 넘겨주는 역할
+- Service는 알맞는 비즈니스 로직을 수행하고 가공하여 Controller에게 다시 데이터를 넘긴다. DB정보가 필요할 때 Repository에 요청
+- Repository는 Entity객체에 의해 DB에 직접 접근, 관리, CRUD를 수행한다
 
 
 #### 5. API 명세서 작성 가이드라인을 검색하여 직접 작성한 API 명세서와 비교해보세요!
