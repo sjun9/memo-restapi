@@ -43,20 +43,15 @@ public class PostService {
     }
 
     @Transactional
-    public ResponseEntity<PostResponseDto> updatePost(Long id, PostRequestDto postRequestDto){
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재 하지 않습니다")
         );
-        try{
-            if(!post.getPassword().equals(postRequestDto.getPassword())) {
-                throw new CredentialException("비밀번호가 일치하지 않습니다");
-            }
-        } catch (CredentialException e){
-            return new ResponseEntity<>(new PostResponseDto(post), HttpStatus.FORBIDDEN);
+        if(!post.getPassword().equals(postRequestDto.getPassword())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
         }
-
         post.update(postRequestDto);
-        return new ResponseEntity<>(new PostResponseDto(post), HttpStatus.OK);
+        return new PostResponseDto(post);
     }
 
     @Transactional
@@ -64,13 +59,10 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재 하지 않습니다")
         );
-        try{
-            if(!post.getPassword().equals(password)) {
-                throw new CredentialException("비밀번호가 일치하지 않습니다");
-            }
-        } catch (CredentialException e){
+        if(!post.getPassword().equals(password)) {
             return false;
         }
+
         postRepository.delete(post);
         return true;
     }
