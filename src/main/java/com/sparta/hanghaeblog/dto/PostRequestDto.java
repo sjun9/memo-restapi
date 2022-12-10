@@ -13,7 +13,7 @@ public class PostRequestDto {
     private String content;
 
     @Builder
-    private PostRequestDto(String title, String name, String password, String content){
+    public PostRequestDto(String title, String name, String password, String content){
         this.title = title;
         this.name = name;
         this.password = password;
