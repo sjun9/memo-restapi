@@ -28,8 +28,8 @@ public class PostController {
 
     @GetMapping("/api/posts/{id}")
     @ResponseBody
-    public PostResponseDto getSelectPost(@PathVariable Long id){
-        return postService.getSelectPost(id);
+    public PostResponseDto getPost(@PathVariable Long id){
+        return postService.getPost(id);
     }
 
     @PutMapping("/api/posts/{id}")
@@ -40,9 +40,15 @@ public class PostController {
 
     @DeleteMapping("/api/posts/{id}")
     @ResponseBody
-    public Boolean deletePost(@PathVariable Long id,@RequestParam String password){
-        return postService.deletePost(id, password);
+    public Boolean deletePost(@PathVariable Long id,@RequestBody PostRequestDto postRequestDto){
+        postService.deletePost(id,postRequestDto);
+        return true;
+    }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseBody
+    public String IllegalArgumentExceptionMessage(IllegalArgumentException e){
+        return e.toString();
     }
 
 }
