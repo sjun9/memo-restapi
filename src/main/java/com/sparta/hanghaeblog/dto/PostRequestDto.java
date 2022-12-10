@@ -1,5 +1,6 @@
 package com.sparta.hanghaeblog.dto;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,4 +11,12 @@ public class PostRequestDto {
     private String name;
     private String password;
     private String content;
+
+    @Builder
+    private PostRequestDto(String title, String name, String password, String content){
+        this.title = title;
+        this.name = name;
+        this.password = password;
+        this.content = content;
+    }
 }

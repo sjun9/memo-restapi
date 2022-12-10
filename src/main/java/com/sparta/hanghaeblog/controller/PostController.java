@@ -47,7 +47,7 @@ public class PostController {
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseBody
-    public String IllegalArgumentExceptionMessage(IllegalArgumentException e){
+    public String IllegalArgumentExceptionMessage(IllegalArgumentException e) {
         return e.toString();
     }
 
