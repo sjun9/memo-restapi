@@ -52,11 +52,11 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long id, PostRequestDto postRequestDto){
+    public void deletePost(Long id, String password){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("아이디가 존재 하지 않습니다")
         );
-        if(!post.getPassword().equals(postRequestDto.getPassword())) {
+        if(!post.getPassword().equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치 하지 않습니다");
         }
         postRepository.delete(post);

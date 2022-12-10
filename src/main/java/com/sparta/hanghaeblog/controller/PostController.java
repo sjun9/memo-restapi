@@ -40,8 +40,8 @@ public class PostController {
 
     @DeleteMapping("/api/posts/{id}")
     @ResponseBody
-    public Boolean deletePost(@PathVariable Long id,@RequestBody PostRequestDto postRequestDto){
-        postService.deletePost(id,postRequestDto);
+    public Boolean deletePost(@PathVariable Long id,@RequestParam String password){
+        postService.deletePost(id,password);
         return true;
     }
 
