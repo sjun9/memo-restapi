@@ -1,6 +1,7 @@
 package com.sparta.hanghaeblog.entity;
 
 import com.sparta.hanghaeblog.dto.PostRequestDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -13,30 +14,23 @@ public class Post extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @Column
     private String title;
-
     @Column
-    private String name;
-
-    @Column
-    private String password;
-
+    private String userName;
     @Column
     private String content;
 
-    public Post(PostRequestDto postRequestDto){
-        this.title = postRequestDto.getTitle();
-        this.name = postRequestDto.getName();
-        this.password = postRequestDto.getPassword();
-        this.content = postRequestDto.getContent();
+    @Builder
+    public Post(String title, String userName, String content){
+        this.title = title;
+        this.userName = userName;
+        this.content = content;
     }
 
-    public void update(PostRequestDto postRequestDto){
-        this.title = postRequestDto.getTitle();
-        this.name = postRequestDto.getName();
-        this.content = postRequestDto.getContent();
+    public void update(String title, String content){
+        this.title = title;
+        this.content = content;
     }
 
 }

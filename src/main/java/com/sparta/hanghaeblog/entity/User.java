@@ -1,13 +1,11 @@
 package com.sparta.hanghaeblog.entity;
 
-import com.sparta.hanghaeblog.dto.UserRequestDto;
+import com.sparta.hanghaeblog.dto.SignupRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity(name = "users")
@@ -22,8 +20,8 @@ public class User extends Timestamped{
     private String password;
 
     @Builder
-    public User(UserRequestDto userRequestDto){
-        this.userName = userRequestDto.getUserName();
-        this.password = userRequestDto.getPassword();
+    public User(SignupRequestDto signupRequestDto){
+        this.userName = signupRequestDto.getUserName();
+        this.password = signupRequestDto.getPassword();
     }
 }

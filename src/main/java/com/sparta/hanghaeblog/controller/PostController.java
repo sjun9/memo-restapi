@@ -5,44 +5,49 @@ import com.sparta.hanghaeblog.dto.PostResponseDto;
 import com.sparta.hanghaeblog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/api/posts")
+    @GetMapping("/")
     @ResponseBody
     public List<PostResponseDto> getAllPost(){
         return postService.getAllPost();
     }
 
-    @PostMapping("/api/posts")
+    @PostMapping("/")
     @ResponseBody
-    public PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto){
-        return postService.createPost(postRequestDto);
+    public PostResponseDto createPost(@Validated @RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
+        return postService.createPost(postRequestDto, request);
     }
 
-    @GetMapping("/api/posts/{id}")
+    @GetMapping("/{id}")
     @ResponseBody
     public PostResponseDto getPost(@PathVariable Long id){
         return postService.getPost(id);
     }
 
-    @PutMapping("/api/posts/{id}")
+    @PutMapping("/{id}")
     @ResponseBody
-    public PostResponseDto updatePost(@PathVariable Long id,@RequestBody PostRequestDto postRequestDto){
-        return postService.updatePost(id, postRequestDto);
+    public PostResponseDto updatePost(
+            @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, HttpServletRequest request){
+        return postService.updatePost(id, postRequestDto, request);
     }
 
-    @DeleteMapping("/api/posts/{id}")
+    @DeleteMapping("/{id}")
     @ResponseBody
-    public Boolean deletePost(@PathVariable Long id,@RequestParam String password){
-        postService.deletePost(id,password);
-        return true;
+    public String deletePost(@PathVariable Long id,HttpServletRequest request){
+        postService.deletePost(id, request);
+        return "delete success";
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
