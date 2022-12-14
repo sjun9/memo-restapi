@@ -14,24 +14,17 @@ public class Post extends Timestamped{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String content;
-
-    public Post(String title, String name, String password, String content){
-        this.title = title;
-        this.name = name;
-        this.password = password;
-        this.content = content;
-    }
 
     public Post(PostRequestDto postRequestDto){
         this.title = postRequestDto.getTitle();

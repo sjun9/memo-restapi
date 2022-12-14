@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Getter
 @NoArgsConstructor
 public class PostRequestDto {
@@ -12,7 +13,6 @@ public class PostRequestDto {
     private String password;
     private String content;
 
-    @Builder
     public PostRequestDto(String title, String name, String password, String content){
         this.title = title;
         this.name = name;
