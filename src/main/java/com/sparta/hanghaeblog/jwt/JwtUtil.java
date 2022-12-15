@@ -41,7 +41,7 @@ public class JwtUtil {
         if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith(BEARER_PREFIX)){
             return bearerToken.substring(7);
         }
-        return null;
+        return "error";
     }
 
     //토큰 생성
