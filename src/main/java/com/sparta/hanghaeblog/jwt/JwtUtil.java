@@ -64,16 +64,12 @@ public class JwtUtil {
             return true;
         }catch (SecurityException | MalformedJwtException e){
             log.info("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
-            System.out.println("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT token, 만료된 JWT token 입니다.");
-            System.out.println("Expired JWT token, 만료된 JWT token 입니다.");
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
-            System.out.println("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
             log.info("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
-            System.out.println("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
         return false;
     }

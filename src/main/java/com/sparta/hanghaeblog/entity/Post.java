@@ -19,12 +19,15 @@ public class Post extends Timestamped{
     private String userName;
     @Column
     private String content;
+    @Column
+    private Long userId;
 
     @Builder
-    public Post(String title, String userName, String content){
+    public Post(String title, String userName, String content, Long userId){
         this.title = title;
         this.userName = userName;
         this.content = content;
+        this.userId = userId;
     }
 
     public void update(String title, String content){
