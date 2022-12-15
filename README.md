@@ -68,5 +68,13 @@ REST란 URI를 통해 자원을 표시하고 HTTP Method를 이용하여 데이�
 ![ERD](./main/resources/static/images/ERD-Lv1.png)
 
 
-
+| 기능 | API URL | Method | Request Header | Request | Response |
+| --- | --- | --- | --- | --- | --- |
+| 회원 가입 | /api/auth/signup | POST |  | {<br/>"userName": "jun99",<br/>"password": "tjdwns123"<br/>} | signup success<br/>"statusCode": 200 |
+| 로그인 | /api/auth/login | POST |  | {<br/>"userName": "jun99",<br/>"password": "tjdwns123"<br/>} | login success<br/>"statusCode": 200 |
+| 게시글 작성 | /api/post | POST | Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdW45OSIsImV4cCI6MTY3MTExMTkwNiwiaWF0IjoxNjcxMTA4MzA2fQ.my2KjfOuKPC2M11eOjqMSDytGV1fHlZcMlq2EXWv0Ck | {<br/>"title": "title1",<br/>"content": "content1"<br/>} | {<br/>"id": 1,<br/>"title": “title1",<br/>"userName": "userName1",<br/>"content": "content1",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>} |
+| 게시글 목록 조회 | /api/posts | GET |  |  | [<br/>{<br/>"id": 1,<br/>"title": “title1",<br/>"userName": "userName1",<br/>"content": "content1",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>},<br/>{<br/>"id": 2,<br/>"title": “title2",<br/>"userName": "userName2",<br/>"content": "content2",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>},<br/>{<br/>"id": 3,<br/>"title": “title3",<br/>"userName": "userName3",<br/>"content": "content3",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>}<br/>…<br/>] |
+| 선택 게시글 조회 | /api/posts/{id} | GET |  |  | {<br/>"id": 1,<br/>"title": “title1",<br/>"userName": "userName1",<br/>"content": "content1",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>} |
+| 선택 게시글 수정 | /api/posts/{id} | PUT | Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdW45OSIsImV4cCI6MTY3MTExMTkwNiwiaWF0IjoxNjcxMTA4MzA2fQ.my2KjfOuKPC2M11eOjqMSDytGV1fHlZcMlq2EXWv0Ck | {<br/>"title": "title11",<br/>"content": "content111"<br/>} | {<br/>"id": 1,<br/>"title": “title11",<br/>"userName": "userName1",<br/>"content": "content111",<br/>"createdAt": "2022-12-01T12:56:36.821474"<br/>} |
+| 선택 게시글 삭제 | /api/posts/{id} | DELETE | Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdW45OSIsImV4cCI6MTY3MTExMTkwNiwiaWF0IjoxNjcxMTA4MzA2fQ.my2KjfOuKPC2M11eOjqMSDytGV1fHlZcMlq2EXWv0Ck |  | delete success<br/>"statusCode": 200|
 
