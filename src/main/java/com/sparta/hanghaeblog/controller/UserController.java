@@ -32,7 +32,7 @@ public class UserController {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public String IllegalArgumentExceptionMessage(IllegalArgumentException e) {
-        return e.toString().substring(e.toString().indexOf(":")+2);
+        return e.getMessage();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

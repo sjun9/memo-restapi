@@ -16,18 +16,16 @@ public class Post extends Timestamped{
     @Column
     private String title;
     @Column
-    private String userName;
-    @Column
     private String content;
-    @Column
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id",nullable = false)
+    private User user;
 
     @Builder
-    public Post(String title, String userName, String content, Long userId){
+    public Post(String title, String content, User user){
         this.title = title;
-        this.userName = userName;
         this.content = content;
-        this.userId = userId;
+        this.user = user;
     }
 
     public void update(String title, String content){

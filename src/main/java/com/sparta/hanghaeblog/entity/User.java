@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity(name = "users")
@@ -17,6 +19,8 @@ public class User {
     private String userName;
     @Column
     private String password;
+    @OneToMany
+    List<Post> posts = new ArrayList<>();
 
     @Builder
     public User(String userName, String password){
