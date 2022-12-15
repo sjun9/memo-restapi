@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Entity(name = "users")
 @NoArgsConstructor
-public class User {
+public class User extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

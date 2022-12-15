@@ -4,6 +4,8 @@ import com.sparta.hanghaeblog.dto.LoginRequestDto;
 import com.sparta.hanghaeblog.dto.SignupRequestDto;
 import com.sparta.hanghaeblog.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,30 +16,28 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/user")
-@ResponseBody
 public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public String signup(@Validated @RequestBody SignupRequestDto signupRequestDto){
+    public ResponseEntity<String> signup(@Validated @RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
-        return "signup success";
+        return new ResponseEntity<>("signup success", HttpStatus.OK);
     }
 
     @PostMapping("/login")
-    public String login(@Validated @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
+    public ResponseEntity<String> login(@Validated @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
         userService.login(loginRequestDto, response);
-        return "login success";
+        return new ResponseEntity<>("login success",HttpStatus.OK);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public String IllegalArgumentExceptionMessage(IllegalArgumentException e) {
-        return e.getMessage();
+    public ResponseEntity<String> IllegalArgumentExceptionMessage(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public String MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return "이름은 4~10글자 알파벳(a~z), 숫자(0~9)로 구성되어야 합니다\n" +
-                "비밀번호는 8~15글자 알파벳(A~Z, a~z), 숫자(0~9)로 구성되어야 합니다";
+    public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        return new ResponseEntity<>("양식에 맞게 입력해 주세요",HttpStatus.BAD_REQUEST);
     }
 }
