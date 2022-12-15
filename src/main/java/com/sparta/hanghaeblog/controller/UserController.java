@@ -38,6 +38,6 @@ public class UserController {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>("양식에 맞게 입력해 주세요",HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
     }
 }
