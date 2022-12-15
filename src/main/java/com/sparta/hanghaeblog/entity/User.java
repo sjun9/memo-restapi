@@ -1,6 +1,5 @@
 package com.sparta.hanghaeblog.entity;
 
-import com.sparta.hanghaeblog.dto.SignupRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,9 @@ import javax.persistence.*;
 @Getter
 @Entity(name = "users")
 @NoArgsConstructor
-public class User extends Timestamped{
+public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
     private String userName;
@@ -20,8 +19,8 @@ public class User extends Timestamped{
     private String password;
 
     @Builder
-    public User(SignupRequestDto signupRequestDto){
-        this.userName = signupRequestDto.getUserName();
-        this.password = signupRequestDto.getPassword();
+    public User(String userName, String password){
+        this.userName = userName;
+        this.password = password;
     }
 }

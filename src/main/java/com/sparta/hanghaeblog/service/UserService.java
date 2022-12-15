@@ -21,12 +21,15 @@ public class UserService {
 
     @Transactional
     public void signup(SignupRequestDto signupRequestDto){
-        Optional<User> found = userRepository.findByUserName(signupRequestDto.getUserName());
+        String userName = signupRequestDto.getUserName();
+        String password = signupRequestDto.getPassword();
+
+        Optional<User> found = userRepository.findByUserName(userName);
         if(found.isPresent()){
             throw new IllegalArgumentException("중복된 사용자가 존재합니다");
         }
-
-        User user = new User(signupRequestDto);
+        User user = new User(userName, password);
+        userRepository.saveAndFlush(user);
     }
 
     @Transactional(readOnly = true)

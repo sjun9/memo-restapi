@@ -51,7 +51,7 @@ public class PostService {
             );
 
             Post post = new Post(title, user.getUserName(), content);
-            postRepository.save(post);
+            postRepository.saveAndFlush(post);
             return new PostResponseDto(post);
         } else {
             return null;
@@ -115,7 +115,7 @@ public class PostService {
                     () -> new IllegalArgumentException("로그인을 확인해주세요")
             );
             if(!post.getUserName().equals(user.getUserName())) {
-                throw new IllegalArgumentException("비밀번호가 일치 하지 않습니다");
+                throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
             }
             postRepository.delete(post);
         } else {

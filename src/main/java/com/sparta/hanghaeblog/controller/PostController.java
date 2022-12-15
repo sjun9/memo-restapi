@@ -14,36 +14,35 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
 
-    @GetMapping("/")
+    @GetMapping("/api/posts")
     @ResponseBody
     public List<PostResponseDto> getAllPost(){
         return postService.getAllPost();
     }
 
-    @PostMapping("/")
+    @PostMapping("/api/posts")
     @ResponseBody
     public PostResponseDto createPost(@Validated @RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
         return postService.createPost(postRequestDto, request);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/posts/{id}")
     @ResponseBody
     public PostResponseDto getPost(@PathVariable Long id){
         return postService.getPost(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/posts/{id}")
     @ResponseBody
     public PostResponseDto updatePost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, HttpServletRequest request){
         return postService.updatePost(id, postRequestDto, request);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/posts/{id}")
     @ResponseBody
     public String deletePost(@PathVariable Long id,HttpServletRequest request){
         postService.deletePost(id, request);

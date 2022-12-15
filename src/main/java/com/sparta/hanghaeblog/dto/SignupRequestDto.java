@@ -10,11 +10,9 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor
 public class SignupRequestDto {
-    @Size(min = 4,max = 10)
-    @Pattern(regexp = "[a-z0-9]")
+    @Pattern(regexp = "[a-z0-9]{4,10}")
     private String userName;
-    @Size(min = 8,max = 15)
-    @Pattern(regexp = "[a-zA-Z0-9]")
+    @Pattern(regexp = "[a-zA-Z0-9]{8,15}")
     private String password;
 
     @Builder

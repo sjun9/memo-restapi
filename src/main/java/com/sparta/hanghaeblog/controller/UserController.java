@@ -6,10 +6,7 @@ import com.sparta.hanghaeblog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -21,14 +18,14 @@ public class UserController {
 
     @PostMapping("/signup")
     @ResponseBody
-    public String signup(@Validated SignupRequestDto signupRequestDto){
+    public String signup(@Validated @RequestBody SignupRequestDto signupRequestDto){
         userService.signup(signupRequestDto);
         return "signup success";
     }
 
     @PostMapping("/login")
     @ResponseBody
-    public String login(@Validated LoginRequestDto loginRequestDto, HttpServletResponse response){
+    public String login(@Validated @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
         userService.login(loginRequestDto, response);
         return "login success";
     }
