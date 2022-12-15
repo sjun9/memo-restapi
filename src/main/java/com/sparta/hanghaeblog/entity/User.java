@@ -19,7 +19,7 @@ public class User {
     private String userName;
     @Column
     private String password;
-    @OneToMany
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     List<Post> posts = new ArrayList<>();
 
     @Builder
