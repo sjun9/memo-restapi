@@ -23,39 +23,27 @@ public class PostController {
 
     @GetMapping("")
     public ResponseEntity<List<PostResponseDto>> getAllPost(){
-        return new ResponseEntity<>(postService.getAllPost(), HttpStatus.OK);
+        return postService.getAllPost();
     }
 
     @PostMapping("")
     public ResponseEntity<PostResponseDto> createPost(@Validated @RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
-        return new ResponseEntity<>(postService.createPost(postRequestDto, request),HttpStatus.OK);
+        return postService.createPost(postRequestDto, request);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id){
-        return new ResponseEntity<>(postService.getPost(id),HttpStatus.OK);
+        return postService.getPost(id);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDto> updatePost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, HttpServletRequest request){
-        return new ResponseEntity<>(postService.updatePost(id, postRequestDto, request),HttpStatus.OK);
+        return postService.updatePost(id, postRequestDto, request);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id,HttpServletRequest request){
-        postService.deletePost(id, request);
-        return new ResponseEntity<>("delete success",HttpStatus.OK);
+        return postService.deletePost(id, request);
     }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> IllegalArgumentExceptionMessage(IllegalArgumentException e) {
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>("빈칸을 입력해 주세요",HttpStatus.BAD_REQUEST);
-    }
-
 }

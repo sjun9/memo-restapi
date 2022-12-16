@@ -9,6 +9,8 @@ import com.sparta.hanghaeblog.repository.PostRepository;
 import com.sparta.hanghaeblog.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,16 +26,16 @@ public class PostService {
     private final JwtUtil jwtUtil;
 
     @Transactional
-    public List<PostResponseDto> getAllPost(){
+    public ResponseEntity<List<PostResponseDto>> getAllPost(){
         List<PostResponseDto> list = new ArrayList<>();
         for(Post post :postRepository.findAllByOrderByCreatedAt()){
             list.add(new PostResponseDto(post));
         }
-        return list;
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
+    public ResponseEntity<PostResponseDto> createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
 
@@ -55,19 +57,19 @@ public class PostService {
 
         Post post = new Post(title, content, user);
         postRepository.saveAndFlush(post);
-        return new PostResponseDto(post);
+        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
     }
 
     @Transactional
-    public PostResponseDto getPost(Long id){
+    public ResponseEntity<PostResponseDto> getPost(Long id){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        return new PostResponseDto(post);
+        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
     }
 
     @Transactional
-    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, HttpServletRequest request){
+    public ResponseEntity<PostResponseDto> updatePost(Long id, PostRequestDto postRequestDto, HttpServletRequest request){
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
 
@@ -93,12 +95,11 @@ public class PostService {
             throw new IllegalArgumentException("자신의 글만 수정할 수 있습니다.");
         }
         post.update(title, content);
-        return new PostResponseDto(post);
-
+        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
     }
 
     @Transactional
-    public void deletePost(Long id, HttpServletRequest request){
+    public ResponseEntity<String> deletePost(Long id, HttpServletRequest request){
         String token = jwtUtil.resolveToken(request);
         Claims claims;
 
@@ -121,6 +122,6 @@ public class PostService {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
         }
         postRepository.delete(post);
-
+        return new ResponseEntity<>("delete success",HttpStatus.OK);
     }
 }

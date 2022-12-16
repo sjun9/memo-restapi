@@ -21,23 +21,11 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Validated @RequestBody SignupRequestDto signupRequestDto){
-        userService.signup(signupRequestDto);
-        return new ResponseEntity<>("signup success", HttpStatus.OK);
+        return userService.signup(signupRequestDto);
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@Validated @RequestBody LoginRequestDto loginRequestDto, HttpServletResponse response){
-        userService.login(loginRequestDto, response);
-        return new ResponseEntity<>("login success",HttpStatus.OK);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> IllegalArgumentExceptionMessage(IllegalArgumentException e) {
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> MethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        return new ResponseEntity<>(e.getBindingResult().getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
+        return userService.login(loginRequestDto, response);
     }
 }
