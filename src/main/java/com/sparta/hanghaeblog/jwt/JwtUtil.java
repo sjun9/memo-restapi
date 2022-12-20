@@ -1,5 +1,6 @@
 package com.sparta.hanghaeblog.jwt;
 
+import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -20,6 +21,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtUtil {
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String AUTHORIZATION_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
@@ -45,12 +47,13 @@ public class JwtUtil {
     }
 
     //토큰 생성
-    public String createToken(String userName){
+    public String createToken(String userName, UserRoleEnum userRole){
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
                         .setSubject(userName)
+                        .claim(AUTHORIZATION_KEY, userRole.toString())
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(signatureAlgorithm, key)
@@ -79,4 +82,17 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
+    public Claims getUserInfoCheckedToken(HttpServletRequest request){
+        String token = resolveToken(request);
+        Claims claims;
+        if (token.equals("error")) {
+            throw new IllegalArgumentException("Token Resolve Error");
+        }
+        if (validateToken(token)) {
+            claims = getUserInfoFromToken(token);
+        } else {
+            throw new IllegalArgumentException("Token Validate Error");
+        }
+        return claims;
+    }
 }

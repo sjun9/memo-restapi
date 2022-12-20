@@ -19,12 +19,18 @@ public class User extends Timestamped{
     private String userName;
     @Column
     private String password;
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    List<Post> posts = new ArrayList<>();
+    @Column
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum userRole;
 
     @Builder
-    public User(String userName, String password){
+    public User(String userName, String password, UserRoleEnum userRole){
         this.userName = userName;
         this.password = password;
+        this.userRole = userRole;
+    }
+
+    public boolean checkPassword(String password){
+        return this.password.equals(password);
     }
 }

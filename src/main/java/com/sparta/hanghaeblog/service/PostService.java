@@ -1,21 +1,22 @@
 package com.sparta.hanghaeblog.service;
 
+import com.sparta.hanghaeblog.dto.CommentListDto;
 import com.sparta.hanghaeblog.dto.PostRequestDto;
 import com.sparta.hanghaeblog.dto.PostResponseDto;
+import com.sparta.hanghaeblog.entity.Comment;
 import com.sparta.hanghaeblog.entity.Post;
 import com.sparta.hanghaeblog.entity.User;
-import com.sparta.hanghaeblog.jwt.JwtUtil;
+import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import com.sparta.hanghaeblog.repository.PostRepository;
 import com.sparta.hanghaeblog.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -23,105 +24,84 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-    private final JwtUtil jwtUtil;
 
     @Transactional
-    public ResponseEntity<List<PostResponseDto>> getAllPost(){
+    public List<PostResponseDto> getAllPost(){
         List<PostResponseDto> list = new ArrayList<>();
-        for(Post post :postRepository.findAllByOrderByCreatedAt()){
-            list.add(new PostResponseDto(post));
+        for(Post post :postRepository.findAllByOrderByCreatedAtDesc()){
+            List<CommentListDto> commentList = new ArrayList<>();
+            for(Comment comment: post.getComments()){
+                commentList.add(new CommentListDto(comment));
+            }
+            list.add(new PostResponseDto(post,commentList));
         }
-        return new ResponseEntity<>(list, HttpStatus.OK);
+        return list;
     }
 
     @Transactional
-    public ResponseEntity<PostResponseDto> createPost(PostRequestDto postRequestDto, HttpServletRequest request) {
+    public PostResponseDto createPost(PostRequestDto postRequestDto, String userName) {
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
 
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if (token.equals("error")) {
-            throw new IllegalArgumentException("Token Resolve Error");
-        }
-
-        if (jwtUtil.validateToken(token)) {
-            claims = jwtUtil.getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Validate Error");
-        }
-        User user = userRepository.findByUserName(claims.getSubject()).orElseThrow(
+        User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요.")
         );
-
         Post post = new Post(title, content, user);
         postRepository.saveAndFlush(post);
-        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
+        return new PostResponseDto(post,new ArrayList<>());
     }
 
     @Transactional
-    public ResponseEntity<PostResponseDto> getPost(Long id){
+    public PostResponseDto getPost(Long id){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
+
+        List<CommentListDto> commentList = new ArrayList<>();
+        for(Comment comment: post.getComments()){
+            commentList.add(new CommentListDto(comment));
+        }
+
+        return new PostResponseDto(post,commentList);
     }
 
     @Transactional
-    public ResponseEntity<PostResponseDto> updatePost(Long id, PostRequestDto postRequestDto, HttpServletRequest request){
+    public PostResponseDto updatePost(Long id, PostRequestDto postRequestDto, String userName){
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
 
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if (token.equals("error")) {
-            throw new IllegalArgumentException("Token Resolve Error");
-        }
-
-        if (jwtUtil.validateToken(token)) {
-            claims = jwtUtil.getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Validate Error");
-        }
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        User user = userRepository.findByUserName(claims.getSubject()).orElseThrow(
+        User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요.")
         );
-        if(!post.getUser().getId().equals(user.getId())) {
+        if(post.isEqualId(user.getId())||user.getUserRole()== UserRoleEnum.ADMIN) {
+            post.update(title, content);
+
+            List<CommentListDto> commentList = new ArrayList<>();
+            for (Comment comment : post.getComments()) {
+                commentList.add(new CommentListDto(comment));
+            }
+
+            return new PostResponseDto(post, commentList);
+        } else {
             throw new IllegalArgumentException("자신의 글만 수정할 수 있습니다.");
         }
-        post.update(title, content);
-        return new ResponseEntity<>(new PostResponseDto(post),HttpStatus.OK);
     }
 
     @Transactional
-    public ResponseEntity<String> deletePost(Long id, HttpServletRequest request){
-        String token = jwtUtil.resolveToken(request);
-        Claims claims;
-
-        if (token.equals("error")) {
-            throw new IllegalArgumentException("Token Resolve Error");
-        }
-
-        if(jwtUtil.validateToken(token)){
-            claims = jwtUtil.getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Validate Error");
-        }
+    public void deletePost(Long id, String userName){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        User user = userRepository.findByUserName(claims.getSubject()).orElseThrow(
+        User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요")
         );
-        if(!post.getUser().getId().equals(user.getId())) {
+        if(post.isEqualId(user.getId())||user.getUserRole()==UserRoleEnum.ADMIN) {
+            postRepository.delete(post);
+        } else {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
         }
-        postRepository.delete(post);
-        return new ResponseEntity<>("delete success",HttpStatus.OK);
     }
 }

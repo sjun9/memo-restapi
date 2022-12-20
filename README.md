@@ -65,7 +65,7 @@ REST란 URI를 통해 자원을 표시하고 HTTP Method를 이용하여 데이�
 - DI : IoC를 구현하는 디자인 패턴, 클래스 타입에 고정되지 않고 인터페이스 타입으로 주입 받아 구현할 수 있다, 의존성이 떨어지고 재사용성이 높아진다.
 
 
-![ERD](/src/main/resources/static/images/ERD-Lv1.png)
+![ERD](/src/main/resources/static/images/ERD-Lv2.png)
 
 
 | 기능        | API URL | Method | Request Header                                                                                                                                                 | Request | Response |
