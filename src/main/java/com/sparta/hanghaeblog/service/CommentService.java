@@ -47,6 +47,7 @@ public class CommentService {
         );
         if(comment.isEqualUserName(userName)||userRole.equals(UserRoleEnum.ADMIN.toString())){
             comment.updateContent(content);
+            commentRepository.save(comment);
         } else {
             throw new IllegalArgumentException("수정 권한이 없습니다.");
         }

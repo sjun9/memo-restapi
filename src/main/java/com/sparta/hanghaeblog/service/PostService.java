@@ -48,7 +48,9 @@ public class PostService {
         );
         Post post = new Post(title, content, user);
         postRepository.saveAndFlush(post);
-        return new PostResponseDto(post,new ArrayList<>());
+
+        List<CommentListDto> commentList = new ArrayList<>();
+        return new PostResponseDto(post,commentList);
     }
 
     @Transactional
@@ -78,6 +80,7 @@ public class PostService {
         );
         if(post.isEqualId(user.getId())||user.getUserRole()== UserRoleEnum.ADMIN) {
             post.update(title, content);
+            postRepository.save(post);
 
             List<CommentListDto> commentList = new ArrayList<>();
             for (Comment comment : post.getComments()) {

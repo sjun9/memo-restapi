@@ -1,6 +1,7 @@
 package com.sparta.hanghaeblog.dto;
 
 import com.sparta.hanghaeblog.entity.Comment;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ public class CommentListDto {
     @NotBlank
     private LocalDateTime createAt;
 
+    @Builder
     public CommentListDto(Long id, String content, String userName, LocalDateTime createAt){
         this.id = id;
         this.content = content;
