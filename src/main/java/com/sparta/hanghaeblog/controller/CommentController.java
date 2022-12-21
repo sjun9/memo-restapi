@@ -22,25 +22,22 @@ public class CommentController {
     @PostMapping("/{id}")
     public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
+        String userName = jwtUtil.getUserNameCheckedToken(request);
         return new ResponseEntity<>(commentService.addComment(id, commentRequestDto,userName), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
-        String userRole = claims.get(jwtUtil.AUTHORIZATION_KEY, String.class);
+        String userName = jwtUtil.getUserNameCheckedToken(request);
+        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
         return new ResponseEntity<>(commentService.updateComment(id,commentRequestDto,userName,userRole), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id, HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
-        String userRole = claims.get(jwtUtil.AUTHORIZATION_KEY, String.class);
+        String userName = jwtUtil.getUserNameCheckedToken(request);
+        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
         commentService.deleteComment(id,userName,userRole);
         return new ResponseEntity<>("success delete", HttpStatus.OK);
     }

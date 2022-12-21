@@ -20,18 +20,20 @@ public class Post extends Timestamped{
     private String title;
     @Column
     private String content;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id",nullable = false)
-    private User user;
+    @Column
+    private Long userId;
+    @Column
+    private String userName;
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy (value = "createdAt desc" )
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(String title, String content, User user){
+    public Post(String title, String content, Long userId, String userName){
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.userId = userId;
+        this.userName = userName;
     }
 
     public void update(String title, String content){
@@ -39,7 +41,7 @@ public class Post extends Timestamped{
         this.content = content;
     }
 
-    public boolean isEqualId(Long id){
-        return this.user.getId().equals(id);
+    public boolean hasAuthority(Long id,UserRoleEnum userRole){
+        return this.userId.equals(id)||userRole.equals(UserRoleEnum.ADMIN);
     }
 }

@@ -39,13 +39,13 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto updateComment(Long id, CommentRequestDto commentRequestDto,
-                                            String userName, String userRole){
+                                            String userName, UserRoleEnum userRole){
         Long commentId = id;
         String content = commentRequestDto.getContent();
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
-        if(comment.isEqualUserName(userName)||userRole.equals(UserRoleEnum.ADMIN.toString())){
+        if(comment.hasAuthority(userName,userRole)){
             comment.updateContent(content);
             commentRepository.save(comment);
         } else {
@@ -55,12 +55,12 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long id, String userName,String userRole){
+    public void deleteComment(Long id, String userName,UserRoleEnum userRole){
         Long commentId = id;
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
-        if(comment.isEqualUserName(userName)||userRole.equals(UserRoleEnum.ADMIN.toString())){
+        if(comment.hasAuthority(userName,userRole)){
             commentRepository.delete(comment);
         } else {
             throw new IllegalArgumentException("삭제 권한이 없습니다");

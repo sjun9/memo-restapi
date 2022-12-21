@@ -95,4 +95,12 @@ public class JwtUtil {
         }
         return claims;
     }
+
+    public String getUserNameCheckedToken(HttpServletRequest request){
+        return getUserInfoCheckedToken(request).getSubject();
+    }
+
+    public UserRoleEnum getUserRoleCheckedToken(HttpServletRequest request){
+        return UserRoleEnum.valueOf(getUserInfoCheckedToken(request).get(AUTHORIZATION_KEY, String.class));
+    }
 }

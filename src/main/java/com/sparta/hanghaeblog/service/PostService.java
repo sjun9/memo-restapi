@@ -46,8 +46,8 @@ public class PostService {
         User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요.")
         );
-        Post post = new Post(title, content, user);
-        postRepository.saveAndFlush(post);
+        Post post = new Post(title, content, user.getId(), user.getUserName());
+        postRepository.save(post);
 
         List<CommentListDto> commentList = new ArrayList<>();
         return new PostResponseDto(post,commentList);
@@ -78,7 +78,7 @@ public class PostService {
         User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요.")
         );
-        if(post.isEqualId(user.getId())||user.getUserRole()== UserRoleEnum.ADMIN) {
+        if(post.hasAuthority(user.getId(),user.getUserRole())) {
             post.update(title, content);
             postRepository.save(post);
 
@@ -101,7 +101,7 @@ public class PostService {
         User user = userRepository.findByUserName(userName).orElseThrow(
                 () -> new IllegalArgumentException("로그인을 확인해주세요")
         );
-        if(post.isEqualId(user.getId())||user.getUserRole()==UserRoleEnum.ADMIN) {
+        if(post.hasAuthority(user.getId(),user.getUserRole())) {
             postRepository.delete(post);
         } else {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
