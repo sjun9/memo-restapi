@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,12 +26,16 @@ public class PostResponseDto {
     private LocalDateTime createAt;
     private List<CommentListDto> comments;
 
-    public PostResponseDto(Post post, List<CommentListDto> comments){
+    public PostResponseDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
-        this.userName = post.getUser().getUserName();
+        this.userName = post.getUserName();
         this.content = post.getContent();
         this.createAt = post.getCreatedAt();
+        List<CommentListDto> comments = new ArrayList<>();
+        for (Comment comment : post.getComments()) {
+            comments.add(new CommentListDto(comment));
+        }
         this.comments = comments;
     }
 }

@@ -31,7 +31,7 @@ public class CommentListDto {
     public CommentListDto(Comment comment){
         this.id = comment.getId();
         this.content = comment.getContent();
-        this.userName = comment.getUser().getUserName();
+        this.userName = comment.getUserName();
         this.createAt = comment.getCreatedAt();
     }
 }

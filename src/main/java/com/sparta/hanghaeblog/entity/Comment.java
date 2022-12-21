@@ -15,17 +15,16 @@ public class Comment extends Timestamped{
     private Long id;
     @Column
     private String content;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column
+    private String userName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Builder
-    public Comment(String content, User user, Post post){
+    public Comment(String content, String userName, Post post){
         this.content = content;
-        this.user = user;
+        this.userName = userName;
         this.post = post;
     }
 
@@ -33,7 +32,7 @@ public class Comment extends Timestamped{
         this.content = content;
     }
 
-    public boolean hasAuthority(String userName,UserRoleEnum userRole){
-        return this.user.getUserName().equals(userName)||userRole.equals(UserRoleEnum.ADMIN);
+    public boolean isEqualUserName(String userName){
+        return this.userName.equals(userName);
     }
 }

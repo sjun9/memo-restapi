@@ -21,18 +21,15 @@ public class Post extends Timestamped{
     @Column
     private String content;
     @Column
-    private Long userId;
-    @Column
     private String userName;
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy (value = "createdAt desc" )
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(String title, String content, Long userId, String userName){
+    public Post(String title, String content, String userName){
         this.title = title;
         this.content = content;
-        this.userId = userId;
         this.userName = userName;
     }
 
@@ -41,7 +38,7 @@ public class Post extends Timestamped{
         this.content = content;
     }
 
-    public boolean hasAuthority(Long id,UserRoleEnum userRole){
-        return this.userId.equals(id)||userRole.equals(UserRoleEnum.ADMIN);
+    public boolean isEqualUserName(String userName){
+        return this.userName.equals(userName);
     }
 }

@@ -2,19 +2,17 @@ package com.sparta.hanghaeblog.controller;
 
 import com.sparta.hanghaeblog.dto.PostRequestDto;
 import com.sparta.hanghaeblog.dto.PostResponseDto;
+import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
 import com.sparta.hanghaeblog.service.PostService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -31,8 +29,7 @@ public class PostController {
 
     @PostMapping("")
     public ResponseEntity<PostResponseDto> createPost(@Validated @RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
+        String userName = jwtUtil.getUserNameCheckedToken(request);
         return new ResponseEntity<>(postService.createPost(postRequestDto, userName),HttpStatus.OK);
     }
 
@@ -44,16 +41,24 @@ public class PostController {
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDto> updatePost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
-        return new ResponseEntity<>(postService.updatePost(id, postRequestDto, userName),HttpStatus.OK);
+        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
+        if(userRole.equals(UserRoleEnum.ADMIN)){
+            return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
+        } else {
+            String userName = jwtUtil.getUserNameCheckedToken(request);
+            return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, userName),HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePost(@PathVariable Long id,HttpServletRequest request){
-        Claims claims = jwtUtil.getUserInfoCheckedToken(request);
-        String userName = claims.getSubject();
-        postService.deletePost(id, userName);
+        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
+        if(userRole.equals(UserRoleEnum.ADMIN)){
+            postService.deleteAdminPost(id);
+        } else {
+            String userName = jwtUtil.getUserNameCheckedToken(request);
+            postService.deleteMyPost(id, userName);
+        }
         return new ResponseEntity<>("delete success",HttpStatus.OK);
     }
 }
