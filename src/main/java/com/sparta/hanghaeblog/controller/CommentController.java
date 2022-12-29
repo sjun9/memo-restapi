@@ -4,14 +4,18 @@ import com.sparta.hanghaeblog.dto.CommentRequestDto;
 import com.sparta.hanghaeblog.dto.CommentResponseDto;
 import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
+import com.sparta.hanghaeblog.security.UserDetailsImpl;
 import com.sparta.hanghaeblog.service.CommentService;
-import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,20 +25,17 @@ public class CommentController {
     private final JwtUtil jwtUtil;
     @PostMapping("/{postId}")
     public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long postId,
-            @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        String userName = jwtUtil.getUserNameCheckedToken(request);
-        return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userName), HttpStatus.OK);
+                                                         @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userDetails.getUsername()), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id,
-            @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
+            @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
             return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
         }else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userName), HttpStatus.OK);
+            return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userDetails.getUsername()), HttpStatus.OK);
         }
     }
 
@@ -44,8 +45,8 @@ public class CommentController {
         if(userRole.equals(UserRoleEnum.ADMIN)){
             commentService.deleteAdminComment(id);
         } else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            commentService.deleteMyComment(id,userName);
+            String username = jwtUtil.getUserNameCheckedToken(request);
+            commentService.deleteMyComment(id,username);
         }
         return new ResponseEntity<>("success delete", HttpStatus.OK);
     }

@@ -5,7 +5,7 @@ import com.sparta.hanghaeblog.entity.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class PostResponseDto {
     @NotBlank
     private String title;
     @NotBlank
-    private String userName;
+    private String username;
     @NotBlank
     private String content;
     @NotBlank
@@ -29,7 +29,7 @@ public class PostResponseDto {
     public PostResponseDto(Post post){
         this.id = post.getId();
         this.title = post.getTitle();
-        this.userName = post.getUserName();
+        this.username = post.getUsername();
         this.content = post.getContent();
         this.createAt = post.getCreatedAt();
         List<CommentListDto> comments = new ArrayList<>();

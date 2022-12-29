@@ -4,9 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 
 @Getter
 @Entity(name = "users")
@@ -16,7 +14,7 @@ public class User extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column
-    private String userName;
+    private String username;
     @Column
     private String password;
     @Column
@@ -24,13 +22,9 @@ public class User extends Timestamped{
     private UserRoleEnum userRole;
 
     @Builder
-    public User(String userName, String password, UserRoleEnum userRole){
-        this.userName = userName;
+    public User(String username, String password, UserRoleEnum userRole){
+        this.username = username;
         this.password = password;
         this.userRole = userRole;
-    }
-
-    public boolean checkPassword(String password){
-        return this.password.equals(password);
     }
 }

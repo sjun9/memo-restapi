@@ -4,15 +4,16 @@ import com.sparta.hanghaeblog.dto.PostRequestDto;
 import com.sparta.hanghaeblog.dto.PostResponseDto;
 import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
+import com.sparta.hanghaeblog.security.UserDetailsImpl;
 import com.sparta.hanghaeblog.service.PostService;
-import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -28,9 +29,8 @@ public class PostController {
     }
 
     @PostMapping("")
-    public ResponseEntity<PostResponseDto> createPost(@Validated @RequestBody PostRequestDto postRequestDto, HttpServletRequest request){
-        String userName = jwtUtil.getUserNameCheckedToken(request);
-        return new ResponseEntity<>(postService.createPost(postRequestDto, userName),HttpStatus.OK);
+    public ResponseEntity<PostResponseDto> createPost(@Validated @RequestBody PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(postService.createPost(postRequestDto, userDetails.getUsername()),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -45,8 +45,8 @@ public class PostController {
         if(userRole.equals(UserRoleEnum.ADMIN)){
             return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
         } else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, userName),HttpStatus.OK);
+            String username = jwtUtil.getUserNameCheckedToken(request);
+            return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, username),HttpStatus.OK);
         }
     }
 
@@ -56,8 +56,8 @@ public class PostController {
         if(userRole.equals(UserRoleEnum.ADMIN)){
             postService.deleteAdminPost(id);
         } else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            postService.deleteMyPost(id, userName);
+            String username = jwtUtil.getUserNameCheckedToken(request);
+            postService.deleteMyPost(id, username);
         }
         return new ResponseEntity<>("delete success",HttpStatus.OK);
     }

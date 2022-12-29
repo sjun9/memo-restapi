@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,22 +16,22 @@ public class CommentListDto {
     @NotBlank
     private String content;
     @NotBlank
-    private String userName;
+    private String username;
     @NotBlank
     private LocalDateTime createAt;
 
     @Builder
-    public CommentListDto(Long id, String content, String userName, LocalDateTime createAt){
+    public CommentListDto(Long id, String content, String username, LocalDateTime createAt){
         this.id = id;
         this.content = content;
-        this.userName = userName;
+        this.username = username;
         this.createAt = createAt;
     }
 
     public CommentListDto(Comment comment){
         this.id = comment.getId();
         this.content = comment.getContent();
-        this.userName = comment.getUserName();
+        this.username = comment.getUsername();
         this.createAt = comment.getCreatedAt();
     }
 }

@@ -26,10 +26,10 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto createPost(PostRequestDto postRequestDto, String userName) {
+    public PostResponseDto createPost(PostRequestDto postRequestDto, String username) {
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
-        Post post = new Post(title, content, userName);
+        Post post = new Post(title, content, username);
 
         postRepository.save(post);
         return new PostResponseDto(post);
@@ -44,13 +44,13 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponseDto updateMyPost(Long id, PostRequestDto postRequestDto, String userName){
+    public PostResponseDto updateMyPost(Long id, PostRequestDto postRequestDto, String username){
         String title = postRequestDto.getTitle();
         String content = postRequestDto.getContent();
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        if(post.isEqualUserName(userName)) {
+        if(post.isEqualUserName(username)) {
             post.update(title, content);
             postRepository.save(post);
         } else {
@@ -72,11 +72,11 @@ public class PostService {
     }
 
     @Transactional
-    public void deleteMyPost(Long id, String userName){
+    public void deleteMyPost(Long id, String username){
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        if(post.isEqualUserName(userName)) {
+        if(post.isEqualUserName(username)) {
             postRepository.delete(post);
         } else {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
