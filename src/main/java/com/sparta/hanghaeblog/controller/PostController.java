@@ -40,23 +40,21 @@ public class PostController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PostResponseDto> updatePost(
-            @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
+            @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
             return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
         } else {
-            String username = jwtUtil.getUserNameCheckedToken(request);
+            String username = userDetails.getUsername();
             return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, username),HttpStatus.OK);
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id,HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
+    public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
             postService.deleteAdminPost(id);
         } else {
-            String username = jwtUtil.getUserNameCheckedToken(request);
+            String username = userDetails.getUsername();
             postService.deleteMyPost(id, username);
         }
         return new ResponseEntity<>("delete success",HttpStatus.OK);

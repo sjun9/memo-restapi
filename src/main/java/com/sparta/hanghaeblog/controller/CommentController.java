@@ -40,13 +40,11 @@ public class CommentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id, HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
+    public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
             commentService.deleteAdminComment(id);
         } else {
-            String username = jwtUtil.getUserNameCheckedToken(request);
-            commentService.deleteMyComment(id,username);
+            commentService.deleteMyComment(id,userDetails.getUsername());
         }
         return new ResponseEntity<>("success delete", HttpStatus.OK);
     }
