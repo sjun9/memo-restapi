@@ -29,8 +29,6 @@ public class JwtUtil {
     private static final String BEARER_PREFIX = "Bearer ";
     private static final long TOKEN_TIME = 60 * 60 * 1000L;
 
-    private final UserDetailsServiceImpl userDetailsService;
-
     @Value("${jwt.secret.key}")
     private String secretKey;
     private Key key;
@@ -108,11 +106,6 @@ public class JwtUtil {
 
     public UserRoleEnum getUserRoleCheckedToken(HttpServletRequest request){
         return UserRoleEnum.valueOf((String) getUserInfoCheckedToken(request).get(AUTHORIZATION_KEY));
-    }
-
-    public Authentication createAuthentication(String username){
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 
 }

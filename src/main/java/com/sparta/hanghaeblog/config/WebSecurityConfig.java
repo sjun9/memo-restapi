@@ -49,7 +49,7 @@ public class WebSecurityConfig {
                 .requestMatchers("/api/posts").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(new CustomSecurityFilter(userDetailsService,passwordEncoder()), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         //http.formLogin().loginPage("/api/user/login-page").permitAll();
 
