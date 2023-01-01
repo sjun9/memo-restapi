@@ -50,7 +50,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        if(post.isEqualUserName(username)) {
+        if(post.isEqualUsername(username)) {
             post.update(title, content);
             postRepository.save(post);
         } else {
@@ -76,7 +76,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        if(post.isEqualUserName(username)) {
+        if(post.isEqualUsername(username)) {
             postRepository.delete(post);
         } else {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");

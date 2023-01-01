@@ -18,23 +18,23 @@ public class CommentService {
     private final PostRepository postRepository;
 
     @Transactional
-    public CommentResponseDto addComment(Long postId, CommentRequestDto commentRequestDto, String userName){
+    public CommentResponseDto addComment(Long postId, CommentRequestDto commentRequestDto, String username){
         String content = commentRequestDto.getContent();
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재하지 않습니다.")
         );
-        Comment comment = new Comment(content, userName, post);
+        Comment comment = new Comment(content, username, post);
         commentRepository.saveAndFlush(comment);
         return new CommentResponseDto(comment);
     }
 
     @Transactional
-    public CommentResponseDto updateMyComment(Long id, CommentRequestDto commentRequestDto, String userName){
+    public CommentResponseDto updateMyComment(Long id, CommentRequestDto commentRequestDto, String username){
         String content = commentRequestDto.getContent();
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
-        if(comment.isEqualUserName(userName)){
+        if(comment.isEqualUsername(username)){
             comment.updateContent(content);
             commentRepository.save(comment);
         } else {
@@ -55,11 +55,11 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteMyComment(Long id, String userName){
+    public void deleteMyComment(Long id, String username){
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
-        if(comment.isEqualUserName(userName)){
+        if(comment.isEqualUsername(username)){
             commentRepository.delete(comment);
         } else {
             throw new IllegalArgumentException("삭제 권한이 없습니다");

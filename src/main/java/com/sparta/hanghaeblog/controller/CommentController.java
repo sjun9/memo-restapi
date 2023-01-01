@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/comment")
 public class CommentController {
     private final CommentService commentService;
-    private final JwtUtil jwtUtil;
+
     @PostMapping("/{postId}")
     public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long postId,
                                                          @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){

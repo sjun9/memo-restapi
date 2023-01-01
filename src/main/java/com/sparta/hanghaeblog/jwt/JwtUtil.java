@@ -51,12 +51,12 @@ public class JwtUtil {
     }
 
     //토큰 생성
-    public String createToken(String userName, UserRoleEnum userRole){
+    public String createToken(String username, UserRoleEnum userRole){
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(userName)
+                        .setSubject(username)
                         .claim(AUTHORIZATION_KEY, userRole)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
@@ -100,7 +100,7 @@ public class JwtUtil {
         return claims;
     }
 
-    public String getUserNameCheckedToken(HttpServletRequest request){
+    public String getUsernameCheckedToken(HttpServletRequest request){
         return getUserInfoCheckedToken(request).getSubject();
     }
 

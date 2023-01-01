@@ -32,7 +32,7 @@ public class Comment extends Timestamped{
         this.content = content;
     }
 
-    public boolean isEqualUserName(String userName){
-        return this.username.equals(userName);
+    public boolean isEqualUsername(String username){
+        return this.username.equals(username);
     }
 }

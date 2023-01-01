@@ -26,11 +26,12 @@ public class CustomSecurityFilter extends OncePerRequestFilter {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        if(username != null && password  != null && (request.getRequestURI().equals("/api/user/login") )){
+        if(username != null && password  != null && (request.getRequestURI().equals("/user/login") )){
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             // 비밀번호 확인
             if(!passwordEncoder.matches(password, userDetails.getPassword())) {
+                System.out.println(password + userDetails.getPassword());
                 throw new IllegalAccessError("비밀번호가 일치하지 않습니다.");
             }
 
