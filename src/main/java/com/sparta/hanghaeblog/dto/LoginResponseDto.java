@@ -5,19 +5,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @Getter
 @NoArgsConstructor
 public class LoginResponseDto {
     @NotBlank
-    private String userName;
+    private String username;
     @NotBlank
     private UserRoleEnum userRole;
 
     @Builder
-    public LoginResponseDto(String userName, UserRoleEnum userRole){
-        this.userName = userName;
+    public LoginResponseDto(String username, UserRoleEnum userRole){
+        this.username = username;
         this.userRole = userRole;
     }
 }

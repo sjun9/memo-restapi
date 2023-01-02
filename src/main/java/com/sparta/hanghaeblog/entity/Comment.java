@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @NoArgsConstructor
@@ -16,15 +16,15 @@ public class Comment extends Timestamped{
     @Column
     private String content;
     @Column
-    private String userName;
+    private String username;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Builder
-    public Comment(String content, String userName, Post post){
+    public Comment(String content, String username, Post post){
         this.content = content;
-        this.userName = userName;
+        this.username = username;
         this.post = post;
     }
 
@@ -32,7 +32,7 @@ public class Comment extends Timestamped{
         this.content = content;
     }
 
-    public boolean isEqualUserName(String userName){
-        return this.userName.equals(userName);
+    public boolean isEqualUsername(String username){
+        return this.username.equals(username);
     }
 }

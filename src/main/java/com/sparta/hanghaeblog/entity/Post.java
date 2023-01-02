@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +21,17 @@ public class Post extends Timestamped{
     @Column
     private String content;
     @Column
-    private String userName;
+    private String username;
+
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy (value = "createdAt desc" )
     private List<Comment> comments = new ArrayList<>();
 
     @Builder
-    public Post(String title, String content, String userName){
+    public Post(String title, String content, String username){
         this.title = title;
         this.content = content;
-        this.userName = userName;
+        this.username = username;
     }
 
     public void update(String title, String content){
@@ -38,7 +39,7 @@ public class Post extends Timestamped{
         this.content = content;
     }
 
-    public boolean isEqualUserName(String userName){
-        return this.userName.equals(userName);
+    public boolean isEqualUsername(String username){
+        return this.username.equals(username);
     }
 }

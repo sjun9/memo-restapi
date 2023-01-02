@@ -9,16 +9,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/auth")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
     private final JwtUtil jwtUtil;
@@ -33,7 +30,7 @@ public class UserController {
     public ResponseEntity<String> login(@Validated @RequestBody LoginRequestDto loginRequestDto){
         LoginResponseDto loginResponseDto = userService.login(loginRequestDto);
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set(JwtUtil.AUTHORIZATION_HEADER,jwtUtil.createToken(loginResponseDto.getUserName(),loginResponseDto.getUserRole()));
+        responseHeaders.set(JwtUtil.AUTHORIZATION_HEADER,jwtUtil.createToken(loginResponseDto.getUsername(),loginResponseDto.getUserRole()));
         return new ResponseEntity<>("login success",responseHeaders,HttpStatus.OK);
     }
 }
