@@ -3,6 +3,9 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.dto.PostRequestDto;
 import com.sparta.hanghaeblog.dto.PostResponseDto;
 import com.sparta.hanghaeblog.entity.Post;
+import com.sparta.hanghaeblog.entity.PostLike;
+import com.sparta.hanghaeblog.entity.User;
+import com.sparta.hanghaeblog.repository.PostLikeRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
+    private final PostLikeRepository postLikeRepository;
 
     @Transactional
     public List<PostResponseDto> getAllPost(){
@@ -89,5 +93,20 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
         postRepository.delete(post);
+    }
+
+    @Transactional
+    public String updateLikePost(Long id, String username){
+        Post post = postRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
+        );
+        for(PostLike postLike: post.getPostLikes()){
+            if(postLike.getUsername().equals(username)){
+                postLikeRepository.delete(postLike);
+                return "minus";
+            }
+        }
+        postLikeRepository.save(new PostLike(post,username));
+        return "plus";
     }
 }

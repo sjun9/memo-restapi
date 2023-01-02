@@ -3,7 +3,10 @@ package com.sparta.hanghaeblog.service;
 import com.sparta.hanghaeblog.dto.CommentRequestDto;
 import com.sparta.hanghaeblog.dto.CommentResponseDto;
 import com.sparta.hanghaeblog.entity.Comment;
+import com.sparta.hanghaeblog.entity.CommentLike;
 import com.sparta.hanghaeblog.entity.Post;
+import com.sparta.hanghaeblog.entity.PostLike;
+import com.sparta.hanghaeblog.repository.CommentLikeRepository;
 import com.sparta.hanghaeblog.repository.CommentRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
     @Transactional
     public CommentResponseDto addComment(Long postId, CommentRequestDto commentRequestDto, String username){
@@ -72,5 +76,20 @@ public class CommentService {
                 () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
         );
         commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public String updateLikeComment(Long id, String username){
+        Comment comment = commentRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
+        );
+        for(CommentLike commentLike: comment.getCommentLikes()){
+            if(commentLike.getUsername().equals(username)){
+                commentLikeRepository.delete(commentLike);
+                return "minus";
+            }
+        }
+        commentLikeRepository.save(new CommentLike(comment,username));
+        return "plus";
     }
 }

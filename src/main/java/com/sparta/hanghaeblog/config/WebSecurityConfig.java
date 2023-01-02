@@ -44,12 +44,12 @@ public class WebSecurityConfig {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.authorizeRequests().requestMatchers("/api/user/**").permitAll()
+                .requestMatchers("/api/user/admin/signup").permitAll()
                 .requestMatchers("/api/posts").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(new JwtAuthFilter(jwtUtil, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
-        http.formLogin().loginProcessingUrl("/login").permitAll();
-
+        //http.formLogin().loginProcessingUrl("/login").permitAll();
         //http.exceptionHandling().accessDeniedPage("api/user/forbidden");
 
         return http.build();
