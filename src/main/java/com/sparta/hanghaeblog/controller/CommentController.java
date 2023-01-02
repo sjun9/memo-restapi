@@ -36,6 +36,7 @@ public class CommentController {
     }
 
     @PutMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<CommentResponseDto> updateAdminComment(@PathVariable Long id,
                                                             @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
@@ -48,6 +49,7 @@ public class CommentController {
     }
 
     @DeleteMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.deleteAdminComment(id);
         return new ResponseEntity<>("success delete", HttpStatus.OK);
