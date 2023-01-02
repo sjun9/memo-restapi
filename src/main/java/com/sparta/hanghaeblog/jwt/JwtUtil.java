@@ -1,7 +1,6 @@
 package com.sparta.hanghaeblog.jwt;
 
 import com.sparta.hanghaeblog.entity.UserRoleEnum;
-import com.sparta.hanghaeblog.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -10,9 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -85,27 +81,4 @@ public class JwtUtil {
     public Claims getUserInfoFromToken(String token){
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
-
-    public Claims getUserInfoCheckedToken(HttpServletRequest request){
-        String token = resolveToken(request);
-        Claims claims;
-        if (token.equals("error")) {
-            throw new IllegalArgumentException("Token Resolve Error");
-        }
-        if (validateToken(token)) {
-            claims = getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Validate Error");
-        }
-        return claims;
-    }
-
-    public String getUsernameCheckedToken(HttpServletRequest request){
-        return getUserInfoCheckedToken(request).getSubject();
-    }
-
-    public UserRoleEnum getUserRoleCheckedToken(HttpServletRequest request){
-        return UserRoleEnum.valueOf((String) getUserInfoCheckedToken(request).get(AUTHORIZATION_KEY));
-    }
-
 }

@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
-    private final JwtUtil jwtUtil;
 
     @GetMapping("")
     public ResponseEntity<List<PostResponseDto>> getAllPost(){
@@ -34,29 +33,33 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostResponseDto> getPost(@PathVariable Long id){
+    public ResponseEntity<PostResponseDto> getSelectPost(@PathVariable Long id){
         return new ResponseEntity<>(postService.getPost(id),HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PostResponseDto> updatePost(
+    @PutMapping("/user/{id}")
+    public ResponseEntity<PostResponseDto> updateMyPost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
-            return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
-        } else {
-            String username = userDetails.getUsername();
-            return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, username),HttpStatus.OK);
-        }
+        String username = userDetails.getUsername();
+        return new ResponseEntity<>(postService.updateMyPost(id, postRequestDto, username),HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
-            postService.deleteAdminPost(id);
-        } else {
-            String username = userDetails.getUsername();
-            postService.deleteMyPost(id, username);
-        }
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<PostResponseDto> updateAdminPost(
+            @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<String> deleteMyPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        String username = userDetails.getUsername();
+        postService.deleteMyPost(id, username);
+        return new ResponseEntity<>("delete success",HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<String> deleteAdminPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        postService.deleteAdminPost(id);
         return new ResponseEntity<>("delete success",HttpStatus.OK);
     }
 }

@@ -29,23 +29,27 @@ public class CommentController {
         return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userDetails.getUsername()), HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id,
+    @PutMapping("/user/{id}")
+    public ResponseEntity<CommentResponseDto> updateMtComment(@PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
-            return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
-        }else {
-            return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userDetails.getUsername()), HttpStatus.OK);
-        }
+        return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userDetails.getUsername()), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
+    @PutMapping("/admin/{id}")
+    public ResponseEntity<CommentResponseDto> updateAdminComment(@PathVariable Long id,
+                                                            @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ResponseEntity<String> deleteMyComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        commentService.deleteMyComment(id,userDetails.getUsername());
+        return new ResponseEntity<>("success delete", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        if(userDetails.getAuthorities().contains(UserRoleEnum.ADMIN)){
-            commentService.deleteAdminComment(id);
-        } else {
-            commentService.deleteMyComment(id,userDetails.getUsername());
-        }
+        commentService.deleteAdminComment(id);
         return new ResponseEntity<>("success delete", HttpStatus.OK);
     }
 }
