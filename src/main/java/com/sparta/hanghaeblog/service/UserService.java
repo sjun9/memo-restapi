@@ -23,10 +23,9 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private static final String ADMIN_TOKEN = "AAABnvxRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Transactional
-    public void signup(SignupRequestDto signupRequestDto){
+    public void signup(SignupRequestDto signupRequestDto, UserRoleEnum role){
         String username = signupRequestDto.getUsername();
         String password = passwordEncoder.encode(signupRequestDto.getPassword());
 
@@ -34,16 +33,7 @@ public class UserService {
         if(found.isPresent()){
             throw new IllegalArgumentException("중복된 사용자가 존재합니다");
         }
-
-        UserRoleEnum userRole = UserRoleEnum.USER;
-        if(signupRequestDto.getAdmin()) {
-            if (!signupRequestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 잘못되어 등록이 불가능합니다.");
-            }
-            userRole = UserRoleEnum.ADMIN;
-        }
-
-        User user = new User(username, password, userRole);
+        User user = new User(username, password, role);
         userRepository.saveAndFlush(user);
     }
 

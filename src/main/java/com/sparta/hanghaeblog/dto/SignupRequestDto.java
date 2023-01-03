@@ -18,14 +18,12 @@ public class SignupRequestDto {
     @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[~!@#$%^&*()_+])[a-zA-Z0-9~!@#$%^&*()_+].{8,15}", message = "비밀번호는 알파벳+숫자+특수문자 8~15자리 입력해주세요")
     @NotBlank(message = "비밀번호를 입력해주세요")
     private String password;
-    private Boolean admin = false;
     private String adminToken = "";
 
     @Builder
     public SignupRequestDto(String username, String password, Boolean admin, String adminToken){
         this.username = username;
         this.password = password;
-        this.admin = admin;
         this.adminToken = adminToken;
     }
 

@@ -1,6 +1,5 @@
 package com.sparta.hanghaeblog.entity;
 
-import com.sparta.hanghaeblog.repository.CommentRepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
