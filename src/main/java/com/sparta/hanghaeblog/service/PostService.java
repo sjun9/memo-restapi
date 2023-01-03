@@ -4,9 +4,9 @@ import com.sparta.hanghaeblog.dto.PostRequestDto;
 import com.sparta.hanghaeblog.dto.PostResponseDto;
 import com.sparta.hanghaeblog.entity.Post;
 import com.sparta.hanghaeblog.entity.PostLike;
-import com.sparta.hanghaeblog.entity.User;
 import com.sparta.hanghaeblog.repository.PostLikeRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,13 +100,18 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        for(PostLike postLike: post.getPostLikes()){
-            if(postLike.getUsername().equals(username)){
-                postLikeRepository.delete(postLike);
-                return "minus";
-            }
+
+        try {
+            PostLike postLike = postLikeRepository.findByUsernameAndPostId(username, id).orElseThrow(
+                    () -> new EntityNotFoundException()
+            );
+            postLikeRepository.delete(postLike);
+            post.minusLikeCount();
+            return "minus";
+        }catch (EntityNotFoundException e){
+            postLikeRepository.save(new PostLike(id,username));
+            post.plusLikeCount();
+            return "plus";
         }
-        postLikeRepository.save(new PostLike(post,username));
-        return "plus";
     }
 }

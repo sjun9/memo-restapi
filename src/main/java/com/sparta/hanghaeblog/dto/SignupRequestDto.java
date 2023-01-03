@@ -21,7 +21,7 @@ public class SignupRequestDto {
     private String adminToken = "";
 
     @Builder
-    public SignupRequestDto(String username, String password, Boolean admin, String adminToken){
+    public SignupRequestDto(String username, String password, String adminToken){
         this.username = username;
         this.password = password;
         this.adminToken = adminToken;

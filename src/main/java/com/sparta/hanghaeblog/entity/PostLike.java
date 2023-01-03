@@ -11,13 +11,12 @@ public class PostLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+
+    private Long postId;
     private String username;
 
-    public PostLike(Post post, String username){
-        this.post = post;
+    public PostLike(Long postId, String username){
+        this.postId = postId;
         this.username = username;
     }
 

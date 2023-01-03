@@ -21,8 +21,7 @@ public class Post extends Timestamped{
     private String content;
     @Column
     private String username;
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<PostLike> postLikes = new ArrayList<>();
+    private Integer likeCount;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @OrderBy (value = "createdAt desc" )
@@ -30,6 +29,7 @@ public class Post extends Timestamped{
 
     @Builder
     public Post(String title, String content, String username){
+        this.likeCount = 0;
         this.title = title;
         this.content = content;
         this.username = username;
@@ -40,8 +40,12 @@ public class Post extends Timestamped{
         this.content = content;
     }
 
-    public Integer getLikeCount(){
-        return postLikes.size();
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+
+    public void minusLikeCount(){
+        this.likeCount--;
     }
 
     public boolean isEqualUsername(String username){

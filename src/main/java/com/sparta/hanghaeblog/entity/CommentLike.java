@@ -11,13 +11,13 @@ public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
-    private Comment comment;
+    @Column
+    private Long commentId;
+    @Column
     private String username;
 
-    public CommentLike(Comment comment, String username){
-        this.comment = comment;
+    public CommentLike(Long commentId, String username){
+        this.commentId = commentId;
         this.username = username;
     }
 }

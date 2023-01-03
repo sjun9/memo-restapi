@@ -9,6 +9,7 @@ import com.sparta.hanghaeblog.entity.PostLike;
 import com.sparta.hanghaeblog.repository.CommentLikeRepository;
 import com.sparta.hanghaeblog.repository.CommentRepository;
 import com.sparta.hanghaeblog.repository.PostRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,13 +84,17 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        for(CommentLike commentLike: comment.getCommentLikes()){
-            if(commentLike.getUsername().equals(username)){
-                commentLikeRepository.delete(commentLike);
-                return "minus";
-            }
+        try {
+            CommentLike commentLike = commentLikeRepository.findByUsernameAndCommentId(username, id).orElseThrow(
+                    () -> new EntityNotFoundException()
+            );
+            comment.minusLikeCount();
+            commentLikeRepository.delete(commentLike);
+            return "minus";
+        }catch (EntityNotFoundException e){
+            comment.plusLikeCount();
+            commentLikeRepository.save(new CommentLike(id,username));
+            return "plus";
         }
-        commentLikeRepository.save(new CommentLike(comment,username));
-        return "plus";
     }
 }

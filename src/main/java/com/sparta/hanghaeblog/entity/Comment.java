@@ -1,5 +1,6 @@
 package com.sparta.hanghaeblog.entity;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,27 +21,31 @@ public class Comment extends Timestamped{
     private String content;
     @Column
     private String username;
-    @OneToMany(mappedBy = "comment", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<CommentLike> commentLikes = new ArrayList<>();
+    @Column
+    private Integer likeCount;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     @Builder
     public Comment(String content, String username, Post post){
+        this.likeCount = 0;
         this.content = content;
         this.username = username;
         this.post = post;
-    }
-
-    public Integer getLikeCount(){
-        return commentLikes.size();
     }
 
     public void updateContent(String content){
         this.content = content;
     }
 
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+
+    public void minusLikeCount(){
+        this.likeCount--;
+    }
     public boolean isEqualUsername(String username){
         return this.username.equals(username);
     }
