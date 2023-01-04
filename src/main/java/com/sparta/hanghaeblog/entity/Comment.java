@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @NoArgsConstructor
 @Getter
@@ -17,21 +18,29 @@ public class Comment extends Timestamped{
     private String content;
     @Column
     private String username;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @Column
+    private Integer likeCount;
+    @Column
+    private Long postId;
 
     @Builder
-    public Comment(String content, String username, Post post){
+    public Comment(String content, String username, Long postId){
+        this.likeCount = 0;
         this.content = content;
         this.username = username;
-        this.post = post;
+        this.postId = postId;
     }
 
     public void updateContent(String content){
         this.content = content;
     }
 
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+    public void minusLikeCount(){
+        this.likeCount--;
+    }
     public boolean isEqualUsername(String username){
         return this.username.equals(username);
     }

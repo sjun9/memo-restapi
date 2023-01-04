@@ -9,6 +9,7 @@ import com.sparta.hanghaeblog.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class PostController {
         return new ResponseEntity<>(postService.getPost(id),HttpStatus.OK);
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<PostResponseDto> updateMyPost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         String username = userDetails.getUsername();
@@ -45,12 +46,13 @@ public class PostController {
     }
 
     @PutMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<PostResponseDto> updateAdminPost(
             @PathVariable Long id, @RequestBody @Validated PostRequestDto postRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return new ResponseEntity<>(postService.updateAdminPost(id, postRequestDto),HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMyPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         String username = userDetails.getUsername();
         postService.deleteMyPost(id, username);
@@ -58,8 +60,14 @@ public class PostController {
     }
 
     @DeleteMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<String> deleteAdminPost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         postService.deleteAdminPost(id);
         return new ResponseEntity<>("delete success",HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateLikePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(postService.updateLikePost(id,userDetails.getUsername()),HttpStatus.OK);
     }
 }

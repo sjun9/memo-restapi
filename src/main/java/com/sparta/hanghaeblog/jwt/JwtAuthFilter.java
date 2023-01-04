@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sparta.hanghaeblog.dto.SecurityExceptionDto;
 import com.sparta.hanghaeblog.security.UserDetailsServiceImpl;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,7 +32,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = jwtUtil.resolveToken(request);
 
-        if(!token.equals("error")){
+        if(!token.equals("null")){
             if(!jwtUtil.validateToken(token)){
                 jwtExceptionHandler(response, "Token Error", HttpStatus.UNAUTHORIZED.value());
                 return;

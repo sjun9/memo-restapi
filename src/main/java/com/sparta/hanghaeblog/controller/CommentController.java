@@ -29,27 +29,34 @@ public class CommentController {
         return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userDetails.getUsername()), HttpStatus.OK);
     }
 
-    @PutMapping("/user/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<CommentResponseDto> updateMtComment(@PathVariable Long id,
             @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userDetails.getUsername()), HttpStatus.OK);
     }
 
     @PutMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<CommentResponseDto> updateAdminComment(@PathVariable Long id,
                                                             @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/user/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMyComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.deleteMyComment(id,userDetails.getUsername());
         return new ResponseEntity<>("success delete", HttpStatus.OK);
     }
 
     @DeleteMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
     public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.deleteAdminComment(id);
         return new ResponseEntity<>("success delete", HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateLikeComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.updateLikeComment(id,userDetails.getUsername()),HttpStatus.OK);
     }
 }

@@ -23,18 +23,21 @@ public class PostResponseDto {
     @NotBlank
     private String content;
     @NotBlank
+    private Integer likeCount;
+    @NotBlank
     private LocalDateTime createAt;
-    private List<CommentListDto> comments;
+    private List<CommentResponseDto> comments;
 
-    public PostResponseDto(Post post){
+    public PostResponseDto(Post post, List<Comment> commentlist){
         this.id = post.getId();
         this.title = post.getTitle();
         this.username = post.getUsername();
         this.content = post.getContent();
+        this.likeCount = post.getLikeCount();
         this.createAt = post.getCreatedAt();
-        List<CommentListDto> comments = new ArrayList<>();
-        for (Comment comment : post.getComments()) {
-            comments.add(new CommentListDto(comment));
+        List<CommentResponseDto> comments = new ArrayList<>();
+        for (Comment comment : commentlist) {
+            comments.add(new CommentResponseDto(comment));
         }
         this.comments = comments;
     }

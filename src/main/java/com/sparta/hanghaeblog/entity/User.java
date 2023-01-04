@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import jakarta.persistence.*;
 
+
 @Getter
 @Entity(name = "users")
 @NoArgsConstructor

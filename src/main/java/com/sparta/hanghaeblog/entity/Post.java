@@ -1,6 +1,5 @@
 package com.sparta.hanghaeblog.entity;
 
-import com.sparta.hanghaeblog.repository.CommentRepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,13 +21,11 @@ public class Post extends Timestamped{
     private String content;
     @Column
     private String username;
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @OrderBy (value = "createdAt desc" )
-    private List<Comment> comments = new ArrayList<>();
+    private Integer likeCount;
 
     @Builder
     public Post(String title, String content, String username){
+        this.likeCount = 0;
         this.title = title;
         this.content = content;
         this.username = username;
@@ -37,6 +34,14 @@ public class Post extends Timestamped{
     public void update(String title, String content){
         this.title = title;
         this.content = content;
+    }
+
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+
+    public void minusLikeCount(){
+        this.likeCount--;
     }
 
     public boolean isEqualUsername(String username){
