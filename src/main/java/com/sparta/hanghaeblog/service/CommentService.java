@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class CommentService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재하지 않습니다.")
         );
-        Comment comment = new Comment(content, username, post);
+        Comment comment = new Comment(content, username, post.getId());
         commentRepository.saveAndFlush(comment);
         return new CommentResponseDto(comment);
     }
@@ -84,17 +86,17 @@ public class CommentService {
         Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
-        try {
-            CommentLike commentLike = commentLikeRepository.findByUsernameAndCommentId(username, id).orElseThrow(
-                    () -> new EntityNotFoundException()
-            );
+
+        Optional<CommentLike> commentLike = commentLikeRepository.findByUsernameAndCommentId(username, id);
+        if(commentLike.isPresent()) {
             comment.minusLikeCount();
-            commentLikeRepository.delete(commentLike);
+            commentLikeRepository.deleteByUsernameAndComment(username, comment);
             return "minus";
-        }catch (EntityNotFoundException e){
+        } else {
             comment.plusLikeCount();
-            commentLikeRepository.save(new CommentLike(id,username));
+            commentLikeRepository.save(new CommentLike(comment, username));
             return "plus";
         }
     }
+
 }

@@ -23,10 +23,6 @@ public class Post extends Timestamped{
     private String username;
     private Integer likeCount;
 
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @OrderBy (value = "createdAt desc" )
-    private List<Comment> comments = new ArrayList<>();
-
     @Builder
     public Post(String title, String content, String username){
         this.likeCount = 0;
