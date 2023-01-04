@@ -84,18 +84,18 @@ public class CommentService {
     @Transactional
     public String updateLikeComment(Long id, String username){
         Comment comment = commentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
+                () -> new IllegalArgumentException("해당 댓글이 존재 하지 않습니다.")
         );
 
         Optional<CommentLike> commentLike = commentLikeRepository.findByUsernameAndCommentId(username, id);
         if(commentLike.isPresent()) {
             comment.minusLikeCount();
             commentLikeRepository.deleteByUsernameAndComment(username, comment);
-            return "minus";
+            return "Like -1";
         } else {
             comment.plusLikeCount();
             commentLikeRepository.save(new CommentLike(comment, username));
-            return "plus";
+            return "Like +1";
         }
     }
 
