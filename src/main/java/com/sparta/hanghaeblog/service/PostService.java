@@ -115,11 +115,11 @@ public class PostService {
         if(postLike.isPresent()) {
             postLikeRepository.deleteByUsernameAndPost(username, post);
             post.minusLikeCount();
-            return "minus";
+            return "Like -1";
         }else {
             postLikeRepository.save(new PostLike(post,username));
             post.plusLikeCount();
-            return "plus";
+            return "Like +1";
         }
     }
 
