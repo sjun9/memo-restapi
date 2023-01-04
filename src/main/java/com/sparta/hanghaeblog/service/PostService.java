@@ -89,6 +89,7 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
         if(post.isEqualUsername(username)) {
+            commentRepository.deleteByPostId(post.getId());
             postRepository.delete(post);
         } else {
             throw new IllegalArgumentException("자신의 글만 삭제할 수 있습니다.");
@@ -100,6 +101,7 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 글이 존재 하지 않습니다.")
         );
+        commentRepository.deleteByPostId(post.getId());
         postRepository.delete(post);
     }
 
