@@ -9,9 +9,9 @@ name: CI/CD test
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -61,11 +61,11 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
+        key: ${{ secrets.KEY }}
         port: 22
-        #key: ${{ secrets.PRIVATE_KEY }}
         script: |
             sudo docker rm -f $(docker ps -qa)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}
+            sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
             docker-compose up -d
             docker image prune -f
         
