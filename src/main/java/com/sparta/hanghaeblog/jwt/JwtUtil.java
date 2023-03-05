@@ -4,14 +4,14 @@ import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -43,17 +43,17 @@ public class JwtUtil {
         if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith(BEARER_PREFIX)){
             return bearerToken.substring(7);
         }
-        return "error";
+        return "null";
     }
 
     //토큰 생성
-    public String createToken(String userName, UserRoleEnum userRole){
+    public String createToken(String username, UserRoleEnum userRole){
         Date date = new Date();
 
         return BEARER_PREFIX +
                 Jwts.builder()
-                        .setSubject(userName)
-                        .claim(AUTHORIZATION_KEY, userRole.toString())
+                        .setSubject(username)
+                        .claim(AUTHORIZATION_KEY, userRole)
                         .setExpiration(new Date(date.getTime() + TOKEN_TIME))
                         .setIssuedAt(date)
                         .signWith(signatureAlgorithm, key)
@@ -80,27 +80,5 @@ public class JwtUtil {
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token){
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    }
-
-    public Claims getUserInfoCheckedToken(HttpServletRequest request){
-        String token = resolveToken(request);
-        Claims claims;
-        if (token.equals("error")) {
-            throw new IllegalArgumentException("Token Resolve Error");
-        }
-        if (validateToken(token)) {
-            claims = getUserInfoFromToken(token);
-        } else {
-            throw new IllegalArgumentException("Token Validate Error");
-        }
-        return claims;
-    }
-
-    public String getUserNameCheckedToken(HttpServletRequest request){
-        return getUserInfoCheckedToken(request).getSubject();
-    }
-
-    public UserRoleEnum getUserRoleCheckedToken(HttpServletRequest request){
-        return UserRoleEnum.valueOf(getUserInfoCheckedToken(request).get(AUTHORIZATION_KEY, String.class));
     }
 }

@@ -4,7 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
+
 
 @Entity
 @NoArgsConstructor
@@ -16,23 +17,31 @@ public class Comment extends Timestamped{
     @Column
     private String content;
     @Column
-    private String userName;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    private String username;
+    @Column
+    private Integer likeCount;
+    @Column
+    private Long postId;
 
     @Builder
-    public Comment(String content, String userName, Post post){
+    public Comment(String content, String username, Long postId){
+        this.likeCount = 0;
         this.content = content;
-        this.userName = userName;
-        this.post = post;
+        this.username = username;
+        this.postId = postId;
     }
 
     public void updateContent(String content){
         this.content = content;
     }
 
-    public boolean isEqualUserName(String userName){
-        return this.userName.equals(userName);
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+    public void minusLikeCount(){
+        this.likeCount--;
+    }
+    public boolean isEqualUsername(String username){
+        return this.username.equals(username);
     }
 }

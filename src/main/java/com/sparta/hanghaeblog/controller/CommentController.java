@@ -4,49 +4,59 @@ import com.sparta.hanghaeblog.dto.CommentRequestDto;
 import com.sparta.hanghaeblog.dto.CommentResponseDto;
 import com.sparta.hanghaeblog.entity.UserRoleEnum;
 import com.sparta.hanghaeblog.jwt.JwtUtil;
+import com.sparta.hanghaeblog.security.UserDetailsImpl;
 import com.sparta.hanghaeblog.service.CommentService;
-import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/comment")
 public class CommentController {
     private final CommentService commentService;
-    private final JwtUtil jwtUtil;
+
     @PostMapping("/{postId}")
     public ResponseEntity<CommentResponseDto> addComment(@PathVariable Long postId,
-            @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        String userName = jwtUtil.getUserNameCheckedToken(request);
-        return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userName), HttpStatus.OK);
+                                                         @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.addComment(postId, commentRequestDto,userDetails.getUsername()), HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@PathVariable Long id,
-            @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
-            return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
-        }else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userName), HttpStatus.OK);
-        }
+    public ResponseEntity<CommentResponseDto> updateMtComment(@PathVariable Long id,
+            @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.updateMyComment(id, commentRequestDto, userDetails.getUsername()), HttpStatus.OK);
+    }
+
+    @PutMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    public ResponseEntity<CommentResponseDto> updateAdminComment(@PathVariable Long id,
+                                                            @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.updateAdminComment(id, commentRequestDto), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteComment(@PathVariable Long id, HttpServletRequest request){
-        UserRoleEnum userRole = jwtUtil.getUserRoleCheckedToken(request);
-        if(userRole.equals(UserRoleEnum.ADMIN)){
-            commentService.deleteAdminComment(id);
-        } else {
-            String userName = jwtUtil.getUserNameCheckedToken(request);
-            commentService.deleteMyComment(id,userName);
-        }
+    public ResponseEntity<String> deleteMyComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        commentService.deleteMyComment(id,userDetails.getUsername());
         return new ResponseEntity<>("success delete", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/admin/{id}")
+    @Secured(UserRoleEnum.Authority.ADMIN)
+    public ResponseEntity<String> deleteComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        commentService.deleteAdminComment(id);
+        return new ResponseEntity<>("success delete", HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> updateLikeComment(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return new ResponseEntity<>(commentService.updateLikeComment(id,userDetails.getUsername()),HttpStatus.OK);
     }
 }

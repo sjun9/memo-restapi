@@ -1,11 +1,10 @@
 package com.sparta.hanghaeblog.entity;
 
-import com.sparta.hanghaeblog.repository.CommentRepository;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +20,15 @@ public class Post extends Timestamped{
     @Column
     private String content;
     @Column
-    private String userName;
-    @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @OrderBy (value = "createdAt desc" )
-    private List<Comment> comments = new ArrayList<>();
+    private String username;
+    private Integer likeCount;
 
     @Builder
-    public Post(String title, String content, String userName){
+    public Post(String title, String content, String username){
+        this.likeCount = 0;
         this.title = title;
         this.content = content;
-        this.userName = userName;
+        this.username = username;
     }
 
     public void update(String title, String content){
@@ -38,7 +36,15 @@ public class Post extends Timestamped{
         this.content = content;
     }
 
-    public boolean isEqualUserName(String userName){
-        return this.userName.equals(userName);
+    public void plusLikeCount(){
+        this.likeCount++;
+    }
+
+    public void minusLikeCount(){
+        this.likeCount--;
+    }
+
+    public boolean isEqualUsername(String username){
+        return this.username.equals(username);
     }
 }
